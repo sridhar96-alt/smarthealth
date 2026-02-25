@@ -1,15 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Healify</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2E8B57">
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -21,12 +19,12 @@ input,select,button{padding:8px;margin:5px;width:90%;}
 button{background:#2E8B57;color:white;border:none;cursor:pointer;border-radius:5px;}
 #riskBox{color:white;padding:10px;border-radius:8px;font-weight:bold;}
 canvas{max-width:100%;}
-/* Chatbot */
 #chatbot{position:fixed;bottom:20px;right:20px;width:260px;background:white;border:2px solid #2E8B57;border-radius:10px;}
 #chat-header{background:#2E8B57;color:white;padding:10px;font-weight:bold;}
 #chat-box{height:200px;overflow-y:auto;padding:10px;font-size:14px;text-align:left;}
 #user-input{width:65%;padding:6px;border:1px solid #ccc;}
 </style>
+
 </head>
 
 <body>
@@ -35,7 +33,6 @@ canvas{max-width:100%;}
 
 <div class="container">
 
-<!-- Daily Entry -->
 <div class="card">
 <h3>Daily Entry</h3>
 <input type="number" id="water" placeholder="Water (glasses)">
@@ -52,7 +49,6 @@ canvas{max-width:100%;}
 <p>Points: <span id="points">0</span></p>
 </div>
 
-<!-- BMI -->
 <div class="card">
 <h3>BMI Calculator</h3>
 <input type="number" id="height" placeholder="Height (cm)">
@@ -60,38 +56,32 @@ canvas{max-width:100%;}
 <p id="bmiResult"></p>
 </div>
 
-<!-- Weekly Average -->
 <div class="card">
 <h3>Weekly Average</h3>
 <p id="weeklyAvg"></p>
 </div>
 
-<!-- Insights -->
 <div class="card">
 <h3>Habit Insights</h3>
 <p id="insights"></p>
 </div>
 
-<!-- Risk -->
 <div class="card">
 <h3>Health Risk</h3>
 <div id="riskBox">Low Risk</div>
 </div>
 
-<!-- Mood Chart -->
 <div class="card">
 <h3>Mood Analytics</h3>
 <canvas id="moodChart"></canvas>
 </div>
 
-<!-- Voice Input -->
 <div class="card">
 <h3>Voice Input</h3>
 <button onclick="startVoice()">🎤 Speak</button>
 <p id="voiceText"></p>
 </div>
 
-<!-- Wearable -->
 <div class="card">
 <h3>Wearable Integration</h3>
 <button onclick="simulateWearable()">Sync Steps</button>
@@ -100,7 +90,6 @@ canvas{max-width:100%;}
 
 </div>
 
-<!-- 🤖 AI Chatbot -->
 <div id="chatbot">
 <div id="chat-header">💬 Healify AI</div>
 <div id="chat-box"></div>
@@ -112,23 +101,15 @@ canvas{max-width:100%;}
 let points=0, streak=0;
 let moodData=[0,0,0,0];
 
-/* SAVE DATA */
 function saveData(){
 let w=+water.value, s=+sleep.value, e=+exercise.value;
-let mood=moodSelect.value || mood.value;
-
+let mood=mood.value;
 points+=10; streak++;
-document.getElementById("points").innerText=points;
-document.getElementById("streak").innerText="🔥 Streak: "+streak+" days";
-
-calculateBMI();
-weeklyAverage(w,s,e);
-insights(w,s,e);
-risk(w,s,e);
-updateMood(mood);
+pointsText.innerText=points;
+streakText.innerText="🔥 Streak: "+streak+" days";
+calculateBMI(); weeklyAverage(w,s,e); insights(w,s,e); risk(w,s,e); updateMood(mood);
 }
 
-/* LIVE BMI */
 function calculateBMI(){
 let h=height.value/100, w=weight.value;
 if(!h||!w) return;
@@ -139,36 +120,24 @@ bmiResult.innerText=`BMI: ${bmi} (${status})`;
 height.oninput=calculateBMI;
 weight.oninput=calculateBMI;
 
-/* WEEKLY AVG */
-function weeklyAverage(w,s,e){
-let avg=((w+s+e)/3).toFixed(1);
-weeklyAvg.innerText="Average Score: "+avg;
-}
-
-/* INSIGHTS */
+function weeklyAverage(w,s,e){weeklyAvg.innerText="Average Score: "+((w+s+e)/3).toFixed(1);}
 function insights(w,s,e){
 let msg="";
 if(w<6) msg+="Drink more water. ";
 if(s<6) msg+="Sleep more. ";
 if(e<30) msg+="Exercise more. ";
 if(msg==="") msg="Excellent habits!";
-document.getElementById("insights").innerText=msg;
+insights.innerText=msg;
 }
-
-/* RISK */
 function risk(w,s,e){
-let box=document.getElementById("riskBox");
+let box=riskBox;
 if(w>=6&&s>=7&&e>=30){box.innerText="Low Risk";box.style.background="green";}
 else if(w>=4&&s>=5){box.innerText="Moderate Risk";box.style.background="orange";}
 else{box.innerText="High Risk";box.style.background="red";}
 }
 
-/* MOOD CHART */
-const moodSelect=document.getElementById("mood");
 const ctx=document.getElementById("moodChart");
-const chart=new Chart(ctx,{type:"bar",
-data:{labels:["Happy","Sad","Stressed","Energetic"],
-datasets:[{label:"Mood Count",data:moodData}]}});
+const chart=new Chart(ctx,{type:"bar",data:{labels:["Happy","Sad","Stressed","Energetic"],datasets:[{label:"Mood",data:moodData}]}});
 
 function updateMood(m){
 if(m==="Happy")moodData[0]++;
@@ -178,39 +147,33 @@ if(m==="Energetic")moodData[3]++;
 chart.update();
 }
 
-/* VOICE */
 function startVoice(){
 let rec=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
 rec.onresult=e=>voiceText.innerText=e.results[0][0].transcript;
 rec.start();
 }
 
-/* WEARABLE */
 function simulateWearable(){
-let steps=Math.floor(Math.random()*10000);
-wearableData.innerText="Steps synced: "+steps;
+wearableData.innerText="Steps synced: "+Math.floor(Math.random()*10000);
 }
 
-/* AI CHATBOT */
 function sendMessage(){
 let input=userInput.value;
 if(!input)return;
 chatBox.innerHTML+=`<p><b>You:</b> ${input}</p>`;
-chatBox.innerHTML+=`<p><b>Healify:</b> ${reply(input)}</p>`;
+chatBox.innerHTML+=`<p><b>Healify:</b> ${botReply(input)}</p>`;
 chatBox.scrollTop=chatBox.scrollHeight;
 userInput.value="";
 }
-function reply(t){
+function botReply(t){
 t=t.toLowerCase();
-if(t.includes("bmi")) return "Use BMI section to calculate it.";
-if(t.includes("diet")) return "Eat balanced meals with fruits & vegetables.";
-if(t.includes("exercise")) return "Try 30 minutes of walking daily.";
-if(t.includes("sleep")) return "Aim for 7-8 hours sleep.";
-return "Ask me about health, BMI, diet, or exercise.";
+if(t.includes("bmi")) return "Use BMI section.";
+if(t.includes("exercise")) return "30 minutes daily helps.";
+if(t.includes("sleep")) return "Sleep 7-8 hours.";
+return "Ask about BMI, exercise, sleep, or diet.";
 }
 </script>
 
-<!-- Service Worker -->
 <script>
 if('serviceWorker' in navigator){
 navigator.serviceWorker.register('service-worker.js');
