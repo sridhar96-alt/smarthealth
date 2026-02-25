@@ -3,289 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Healify - Smart Health App</title>
+<title>Healify</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2E8B57">
 
 <style>
-body{
-  font-family: Arial;
-  margin:0;
-  background:#f4f4f4;
-}
-
-header{
-  background:#2E8B57;
-  color:white;
-  padding:15px;
-  text-align:center;
-  font-size:22px;
-}
-
-.container{
-  padding:15px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:15px;
-}
-
-.card{
-  background:white;
-  padding:15px;
-  border-radius:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.2);
-}
-
-button{
-  background:#2E8B57;
-  color:white;
-  border:none;
-  padding:8px;
-  width:100%;
-  margin-top:5px;
-  cursor:pointer;
-  border-radius:5px;
-}
-
-input,select{
-  width:100%;
-  padding:7px;
-  margin:5px 0;
-}
-
-#riskBox{
-  padding:10px;
-  color:white;
-  text-align:center;
-  border-radius:8px;
-}
-
-/* AI Chat */
-#aiBtn{
- position:fixed;
- bottom:20px;
- right:20px;
- background:#2E8B57;
- color:white;
- border:none;
- padding:15px;
- border-radius:50%;
- font-size:20px;
- cursor:pointer;
-}
-
-#aiChat{
- display:none;
- position:fixed;
- bottom:80px;
- right:20px;
- width:300px;
- background:white;
- border-radius:10px;
- box-shadow:0 5px 15px rgba(0,0,0,0.3);
-}
-
-#aiHeader{
- background:#2E8B57;
- color:white;
- padding:10px;
-}
-
-#aiMessages{
- height:200px;
- overflow-y:auto;
- padding:10px;
- font-size:14px;
-}
+body{font-family:Arial;margin:0;background:#f4f4f4;}
+header{background:#2E8B57;color:white;padding:15px;text-align:center;}
+.container{padding:15px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;}
+.card{background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.2);}
+button{background:#2E8B57;color:white;border:none;padding:8px;width:100%;margin-top:5px;border-radius:5px;}
+input,select{width:100%;padding:7px;margin:5px 0;}
+#riskBox{padding:10px;color:white;text-align:center;border-radius:8px;}
+#aiBtn{position:fixed;bottom:20px;right:20px;background:#2E8B57;color:white;border:none;padding:15px;border-radius:50%;font-size:20px;}
+#aiChat{display:none;position:fixed;bottom:80px;right:20px;width:300px;background:white;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,0.3);}
+#aiHeader{background:#2E8B57;color:white;padding:10px;}
+#aiMessages{height:200px;overflow-y:auto;padding:10px;font-size:14px;}
 </style>
 </head>
 
 <body>
 
-<header>🌿 Healify - Smart Health App</header>
+<header>🌿 Healify Smart Health</header>
 
 <div class="container">
 
-<!-- Daily Entry -->
 <div class="card">
-<h3>📅 Daily Entry</h3>
-<input type="number" id="water" placeholder="Water (glasses)">
-<input type="number" id="sleep" placeholder="Sleep (hours)">
-<input type="number" id="exercise" placeholder="Exercise (minutes)">
-<select id="mood">
-<option>Happy</option>
-<option>Sad</option>
-<option>Stressed</option>
-<option>Energetic</option>
-</select>
-<button onclick="saveEntry()">Save Entry</button>
-<p id="streak"></p>
+<h3>Daily Entry</h3>
+<input type="number" id="water" placeholder="Water">
+<input type="number" id="sleep" placeholder="Sleep">
+<input type="number" id="exercise" placeholder="Exercise">
+<button onclick="save()">Save</button>
+<p id="insight"></p>
 </div>
 
-<!-- BMI -->
 <div class="card">
-<h3>⚖️ BMI Calculator</h3>
-<input type="number" id="height" placeholder="Height (cm)">
-<input type="number" id="weight" placeholder="Weight (kg)">
-<button onclick="calcBMI()">Calculate</button>
-<p id="bmiResult"></p>
+<h3>BMI</h3>
+<input id="h" placeholder="Height cm">
+<input id="w" placeholder="Weight kg">
+<button onclick="bmi()">Calculate</button>
+<p id="bmi"></p>
 </div>
 
-<!-- Weekly Avg -->
 <div class="card">
-<h3>📊 Weekly Average</h3>
-<p id="weeklyAvg">No data</p>
-</div>
-
-<!-- Insight -->
-<div class="card">
-<h3>💡 Habit Insights</h3>
-<p id="insight">No data</p>
-</div>
-
-<!-- Risk -->
-<div class="card">
-<h3>🚨 Health Risk</h3>
+<h3>Risk</h3>
 <div id="riskBox">Low</div>
 </div>
 
-<!-- Gamification -->
 <div class="card">
-<h3>🎮 Points</h3>
-<p>Points: <span id="points">0</span></p>
-</div>
-
-<!-- Mood -->
-<div class="card">
-<h3>😊 Mood Count</h3>
-<p id="moodCount">Happy:0 | Sad:0 | Stressed:0 | Energetic:0</p>
-</div>
-
-<!-- Voice -->
-<div class="card">
-<h3>🎤 Voice Input</h3>
-<button onclick="voice()">Start Voice</button>
-<p id="voiceText"></p>
-</div>
-
-<!-- Wearable -->
-<div class="card">
-<h3>⌚ Wearable Sync</h3>
-<button onclick="wearable()">Sync Steps</button>
-<p id="steps"></p>
+<h3>Points</h3>
+<p id="points">0</p>
 </div>
 
 </div>
 
-<!-- AI CHAT -->
 <button id="aiBtn" onclick="toggleAI()">💬</button>
 
 <div id="aiChat">
   <div id="aiHeader">Healify AI</div>
   <div id="aiMessages"></div>
-  <input id="aiInput" placeholder="Ask about health...">
+  <input id="aiInput">
   <button onclick="sendAI()">Send</button>
 </div>
 
+<button id="installBtn" style="display:none;position:fixed;top:10px;right:10px;">Install App</button>
+
 <script>
-let points=0, streak=0;
-let moodData={Happy:0,Sad:0,Stressed:0,Energetic:0};
+let pts=0;
 
-function saveEntry(){
- let w=+water.value;
- let s=+sleep.value;
- let e=+exercise.value;
- let m=mood.value;
-
- if(!w||!s||!e){ alert("Fill all fields"); return; }
-
- points+=10;
- streak++;
- pointsSpan();
- moodData[m]++;
- updateMood();
- insight(w,s,e);
- risk(w,s,e);
- weekly(w,s,e);
+function save(){
+ let w=water.value,s=sleep.value,e=exercise.value;
+ pts+=10; points.innerText=pts;
+ insight.innerText = (w<6?"Drink more water ":"")+(s<7?"Sleep more ":"")+(e<30?"Exercise more":"");
+ riskBox.innerText = (w>=6&&s>=7&&e>=30)?"Low":"High";
 }
 
-function pointsSpan(){
- document.getElementById("points").innerText=points;
- document.getElementById("streak").innerText="🔥 Streak: "+streak;
+function bmi(){
+ let v=(w.value/((h.value/100)**2)).toFixed(2);
+ document.getElementById("bmi").innerText="BMI "+v;
 }
 
-function calcBMI(){
- let h=height.value/100;
- let bmi=(weight.value/(h*h)).toFixed(2);
- bmiResult.innerText="BMI: "+bmi;
-}
-
-function insight(w,s,e){
- let msg="";
- if(w<6) msg+="Drink more water. ";
- if(s<7) msg+="Sleep more. ";
- if(e<30) msg+="Exercise more. ";
- if(msg==="") msg="Excellent habits!";
- document.getElementById("insight").innerText=msg;
-}
-
-function risk(w,s,e){
- let box=document.getElementById("riskBox");
- if(w>=6 && s>=7 && e>=30){
-   box.innerText="Low Risk";
-   box.style.background="green";
- }else if(w>=4 && s>=5){
-   box.innerText="Moderate";
-   box.style.background="orange";
- }else{
-   box.innerText="High Risk";
-   box.style.background="red";
- }
-}
-
-function weekly(w,s,e){
- let avg=((w+s+e)/3).toFixed(2);
- document.getElementById("weeklyAvg").innerText="Average: "+avg;
-}
-
-function updateMood(){
- document.getElementById("moodCount").innerText=
- `Happy:${moodData.Happy} | Sad:${moodData.Sad} | Stressed:${moodData.Stressed} | Energetic:${moodData.Energetic}`;
-}
-
-function voice(){
- let rec=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
- rec.onresult=e=>voiceText.innerText=e.results[0][0].transcript;
- rec.start();
-}
-
-function wearable(){
- let steps=Math.floor(Math.random()*10000);
- document.getElementById("steps").innerText="Steps: "+steps;
-}
-
-/* AI CHAT */
-function toggleAI(){
- aiChat.style.display= aiChat.style.display==="block"?"none":"block";
-}
-
+/* AI CHAT (demo) */
+function toggleAI(){ aiChat.style.display= aiChat.style.display==="block"?"none":"block"; }
 function sendAI(){
- let msg=aiInput.value.toLowerCase();
- if(!msg) return;
- addAI("You",msg);
- addAI("Healify",reply(msg));
+ let msg=aiInput.value;
+ aiMessages.innerHTML+=`<p><b>You:</b>${msg}</p>`;
+ aiMessages.innerHTML+=`<p><b>Healify:</b>Ask about BMI, sleep, diet.</p>`;
  aiInput.value="";
 }
 
-function addAI(sender,text){
- aiMessages.innerHTML+=`<p><b>${sender}:</b> ${text}</p>`;
- aiMessages.scrollTop=aiMessages.scrollHeight;
-}
+/* INSTALL */
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt",e=>{
+ e.preventDefault(); deferredPrompt=e;
+ installBtn.style.display="block";
+});
+installBtn.onclick=()=>deferredPrompt.prompt();
 
-function reply(msg){
- if(msg.includes("bmi")) return "Use BMI calculator above.";
- if(msg.includes("water")) return "Drink 8 glasses daily.";
- if(msg.includes("sleep")) return "Sleep 7–8 hours.";
- if(msg.includes("exercise")) return "Do 30 minutes activity.";
- return "Ask about health, BMI, sleep, or fitness.";
+/* SW */
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.register("service-worker.js");
 }
 </script>
 
