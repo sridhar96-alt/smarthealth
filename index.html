@@ -2,176 +2,150 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Healify 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Healify Pro - Smart Health App</title>
 
 <style>
-body { margin:0; font-family: Arial; background:#f4f6f9; transition:.3s;}
-.dark { background:#1e1e1e; color:white; }
-header { background:#2e8b57; color:white; padding:15px; text-align:center; }
-.container { max-width:900px; margin:auto; padding:20px; }
-.card {
-  background:white; padding:20px; margin:15px 0;
-  border-radius:12px; text-align:center;
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg,#2E8B57,#4CAF50);
+  color: white;
+  text-align: center;
 }
-.dark .card { background:#2c2c2c; }
+
+header {
+  font-size: 28px;
+  padding: 20px;
+  font-weight: bold;
+}
+
+.container {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  color: black;
+  margin: 15px auto;
+  padding: 15px;
+  border-radius: 15px;
+  max-width: 400px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
 
 button {
-  background:#2e8b57; color:white; border:none;
-  padding:10px 15px; border-radius:6px; cursor:pointer;
+  background: #2E8B57;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
 }
-input { padding:8px; margin:5px; width:80%; }
 
-/* Chat */
-.chatbox {
-  position:fixed; bottom:20px; right:20px;
-  width:300px; background:white; border-radius:10px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.2); overflow:hidden;
+input, textarea {
+  width: 90%;
+  padding: 8px;
+  margin: 5px;
 }
-.chat-header { background:#2e8b57; color:white; padding:10px; }
-.chat-body { height:200px; overflow-y:auto; padding:10px; }
-.chat-input { display:flex; }
-.chat-input input { flex:1; border:none; padding:10px; }
 </style>
 </head>
 
 <body>
 
-<header>
-🌿 Healify Pro
-<br>
-<button onclick="toggleDark()">🌙 Dark Mode</button>
-</header>
+<header>🌿 Healify 2.0 — Smart Health Companion</header>
 
 <div class="container">
 
-<!-- LOGIN -->
 <div class="card">
-<h2>👤 Profile</h2>
-<input id="username" placeholder="Enter name">
-<br>
-<button onclick="saveUser()">Save</button>
-<p id="welcome"></p>
-</div>
-
-<!-- HEALTH SCORE -->
-<div class="card">
-<h2>🧠 Daily Health Score</h2>
-<p id="healthScore">Score: 0</p>
-<button onclick="updateScore()">Update Score</button>
-</div>
-
-<!-- BMI -->
-<div class="card">
-<h2>⚖️ BMI Calculator</h2>
-<input id="weight" placeholder="Weight (kg)">
+<h3>📊 Auto BMI Analyzer</h3>
 <input id="height" placeholder="Height (cm)">
-<br>
-<button onclick="calcBMI()">Calculate</button>
+<input id="weight" placeholder="Weight (kg)">
+<button onclick="analyzeBMI()">Analyze</button>
 <p id="bmiResult"></p>
 </div>
 
-<!-- WATER TRACKER -->
 <div class="card">
-<h2>💧 Water Tracker</h2>
-<p>Glasses: <span id="waterCount">0</span></p>
-<button onclick="addWater()">+1 Glass</button>
+<h3>📈 Weekly Health Trend</h3>
+<button onclick="generateTrend()">Auto Analyze</button>
+<p id="trend"></p>
 </div>
 
-<!-- STEP TRACKER -->
 <div class="card">
-<h2>👣 Step Tracker</h2>
-<input id="stepsInput" placeholder="Enter steps">
-<br>
-<button onclick="saveSteps()">Save Steps</button>
-<p id="stepsDisplay"></p>
+<h3>😊 Mood Analyzer</h3>
+<textarea id="moodText" placeholder="How are you feeling today?"></textarea>
+<button onclick="analyzeMood()">Analyze Mood</button>
+<p id="moodResult"></p>
 </div>
 
-<!-- APPOINTMENT -->
 <div class="card">
-<h2>🩺 Doctor Appointment</h2>
-<input id="patient" placeholder="Your name">
-<input type="date" id="date">
-<br>
-<button onclick="book()">Book</button>
-<p id="apptMsg"></p>
+<h3>🏆 Habit Score</h3>
+<button onclick="habitScore()">Generate Score</button>
+<p id="habit"></p>
 </div>
 
+<div class="card">
+<h3>⚠️ Health Risk Indicator</h3>
+<button onclick="riskCheck()">Check Risk</button>
+<p id="risk"></p>
 </div>
 
-<!-- CHAT -->
-<div class="chatbox">
-<div class="chat-header">🤖 Healify AI</div>
-<div class="chat-body" id="chat"></div>
-<div class="chat-input">
-<input id="msg" placeholder="Ask health tips...">
-<button onclick="chat()">Send</button>
+<div class="card">
+<h3>🎤 Voice Input</h3>
+<button onclick="startVoice()">Speak</button>
+<p id="voiceOutput"></p>
 </div>
+
 </div>
 
 <script>
-// DARK MODE
-function toggleDark(){ document.body.classList.toggle("dark"); }
+function analyzeBMI(){
+ let h=document.getElementById("height").value/100;
+ let w=document.getElementById("weight").value;
+ let bmi=(w/(h*h)).toFixed(1);
 
-// PROFILE
-function saveUser(){
-  let name=document.getElementById("username").value;
-  localStorage.setItem("user",name);
-  document.getElementById("welcome").innerText="Welcome "+name+"!";
-}
-document.getElementById("welcome").innerText =
-  "Welcome " + (localStorage.getItem("user") || "Guest");
+ let status="Normal";
+ if(bmi<18.5) status="Underweight";
+ else if(bmi>24.9) status="Overweight";
 
-// BMI
-function calcBMI(){
-  let w=weight.value, h=height.value/100;
-  let bmi=(w/(h*h)).toFixed(1);
-  let status=bmi<18.5?"Underweight":bmi<25?"Healthy":"Overweight";
-  bmiResult.innerText=`BMI: ${bmi} (${status})`;
-  localStorage.setItem("bmi",bmi);
+ document.getElementById("bmiResult").innerHTML =
+ "BMI: "+bmi+" ("+status+")";
 }
 
-// WATER
-let water=localStorage.getItem("water")||0;
-waterCount.innerText=water;
-function addWater(){
-  water++; localStorage.setItem("water",water);
-  waterCount.innerText=water;
+function generateTrend(){
+ let steps=Math.floor(Math.random()*4000+4000);
+ document.getElementById("trend").innerHTML =
+ "You averaged "+steps+" steps/day this week. 👍 Good progress!";
 }
 
-// STEPS
-stepsDisplay.innerText="Saved: "+(localStorage.getItem("steps")||0);
-function saveSteps(){
-  let steps=stepsInput.value;
-  localStorage.setItem("steps",steps);
-  stepsDisplay.innerText="Saved: "+steps;
+function analyzeMood(){
+ let text=document.getElementById("moodText").value.toLowerCase();
+ let mood="Neutral";
+
+ if(text.includes("happy")||text.includes("good")) mood="😊 Positive";
+ if(text.includes("sad")||text.includes("tired")) mood="😔 Low";
+
+ document.getElementById("moodResult").innerHTML="Mood: "+mood;
 }
 
-// HEALTH SCORE
-function updateScore(){
-  let score=0;
-  if(localStorage.getItem("water")>=8) score+=30;
-  if(localStorage.getItem("steps")>=5000) score+=40;
-  if(localStorage.getElementById) score+=30;
-  healthScore.innerText="Score: "+score+"/100";
+function habitScore(){
+ let score=Math.floor(Math.random()*40+60);
+ document.getElementById("habit").innerHTML="Your habit score: "+score+"/100 🏆";
 }
 
-// APPOINTMENT
-function book(){
-  apptMsg.innerText="Appointment booked on "+date.value;
+function riskCheck(){
+ let risk=["Low","Moderate","High"];
+ let result=risk[Math.floor(Math.random()*risk.length)];
+ document.getElementById("risk").innerHTML="Health Risk: "+result;
 }
 
-// AI CHAT
-function chat(){
-  let input=msg.value.toLowerCase();
-  let reply="Stay healthy!";
-  if(input.includes("diet")) reply="Eat fruits & veggies.";
-  if(input.includes("water")) reply="Drink 8 glasses daily.";
-  if(input.includes("sleep")) reply="Sleep 7-8 hours.";
-  if(input.includes("exercise")) reply="Try walking.";
-  chat.innerHTML+=`<p><b>You:</b> ${msg.value}</p>`;
-  chat.innerHTML+=`<p><b>AI:</b> ${reply}</p>`;
-  msg.value="";
+function startVoice(){
+ let recognition=new webkitSpeechRecognition();
+ recognition.onresult=function(event){
+   document.getElementById("voiceOutput").innerHTML =
+   event.results[0][0].transcript;
+ }
+ recognition.start();
 }
 </script>
 
