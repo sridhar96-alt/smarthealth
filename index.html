@@ -1,250 +1,156 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2E8B57">
-<title>SmartHealth AI Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <title>Healify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-:root{
---bg:#f3f4f6;
---card:#ffffff;
---text:#1f2937;
---accent:#7c3aed;
-}
-.dark{
---bg:#111827;
---card:#1f2937;
---text:#f3f4f6;
-}
-body{
-margin:0;
-font-family:Poppins;
-background:var(--bg);
-color:var(--text);
-transition:0.3s;
-}
-h2{padding:20px;}
-.container{
-padding:20px;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:20px;
-}
-.card{
-background:var(--card);
-padding:20px;
-border-radius:15px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
-}
-button{
-padding:8px;
-border:none;
-border-radius:8px;
-background:var(--accent);
-color:white;
-cursor:pointer;
-}
-input,select{
-width:100%;
-padding:8px;
-margin-bottom:10px;
-border-radius:6px;
-border:1px solid #ccc;
-}
-canvas{max-width:100%;}
-#riskBox{padding:15px;border-radius:10px;text-align:center;font-weight:bold;color:white;}
-</style>
+  <!-- PWA Support -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2E8B57">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+      text-align: center;
+    }
+
+    header {
+      background: #2E8B57;
+      color: white;
+      padding: 15px;
+      font-size: 24px;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      margin: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Chatbot */
+    #chatbot {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 260px;
+      background: white;
+      border: 2px solid #2E8B57;
+      border-radius: 10px;
+    }
+
+    #chat-header {
+      background: #2E8B57;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    #chat-box {
+      height: 200px;
+      overflow-y: auto;
+      padding: 10px;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    #user-input {
+      width: 65%;
+      padding: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 30%;
+      background: #2E8B57;
+      color: white;
+      border: none;
+      padding: 7px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
 
-<h2>🌈 SmartHealth AI Dashboard</h2>
-<button onclick="toggleDarkMode()" style="margin-left:20px;">🌙 Toggle Dark Mode</button>
+<header>🌿 Healify - Smart Health App</header>
 
 <div class="container">
 
-<!-- Daily Entry -->
-<div class="card">
-<h3>Daily Entry</h3>
-<input type="number" id="water" placeholder="Water (glasses)">
-<input type="number" id="sleep" placeholder="Sleep (hours)">
-<input type="number" id="exercise" placeholder="Exercise (minutes)">
-<select id="mood">
-<option>Happy</option>
-<option>Sad</option>
-<option>Stressed</option>
-<option>Energetic</option>
-</select>
-<button onclick="saveData()">Save Entry</button>
-<p id="streak"></p>
-</div>
+  <div class="card">
+    <h3>💧 Drink Water</h3>
+    <p>Stay hydrated! Drink at least 8 glasses of water daily.</p>
+  </div>
 
-<!-- BMI Calculator -->
-<div class="card">
-<h3>BMI Calculator</h3>
-<input type="number" id="height" placeholder="Height (cm)">
-<input type="number" id="weight" placeholder="Weight (kg)">
-<button onclick="calculateBMI()">Calculate BMI</button>
-<p id="bmiResult"></p>
-</div>
+  <div class="card">
+    <h3>🏃 Exercise</h3>
+    <p>30 minutes of walking or yoga keeps you fit and active.</p>
+  </div>
 
-<!-- Weekly Average -->
-<div class="card">
-<h3>Weekly Average</h3>
-<p id="weeklyAvg"></p>
-</div>
+  <div class="card">
+    <h3>🥗 Healthy Diet</h3>
+    <p>Eat fruits, vegetables, and balanced meals every day.</p>
+  </div>
 
-<!-- Habit Score -->
-<div class="card">
-<h3>Habit Score</h3>
-<p id="habitScore">0/100</p>
-</div>
-
-<!-- AI Tips -->
-<div class="card">
-<h3>AI Health Tips</h3>
-<p id="aiTips"></p>
-</div>
-
-<!-- Insights -->
-<div class="card">
-<h3>Habit Insights</h3>
-<p id="insights"></p>
-</div>
-
-<!-- Risk -->
-<div class="card">
-<h3>Health Risk Indicator</h3>
-<div id="riskBox">Low Risk</div>
-</div>
-
-<!-- Mood Chart -->
-<div class="card">
-<h3>Mood Analytics</h3>
-<canvas id="moodChart"></canvas>
-</div>
+  <div class="card">
+    <h3>😴 Sleep Well</h3>
+    <p>Get 7–8 hours of quality sleep for a healthy life.</p>
+  </div>
 
 </div>
 
+<!-- 🤖 AI Chatbot -->
+<div id="chatbot">
+  <div id="chat-header">💬 Healify AI</div>
+  <div id="chat-box"></div>
+  <input type="text" id="user-input" placeholder="Ask health tips...">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<!-- Chatbot Script -->
 <script>
-let streakCount=0;
-let moodData=[0,0,0,0];
-let weeklyData=[];
+function sendMessage() {
+  let input = document.getElementById("user-input").value;
+  if (!input) return;
 
-// SAVE ENTRY
-function saveData(){
-let w=+water.value;
-let s=+sleep.value;
-let e=+exercise.value;
-let m=mood.value;
+  let chatBox = document.getElementById("chat-box");
+  chatBox.innerHTML += "<p><b>You:</b> " + input + "</p>";
 
-streakCount++;
-streak.innerText="🔥 Streak: "+streakCount+" days";
+  let reply = getBotReply(input);
+  chatBox.innerHTML += "<p><b>Healify:</b> " + reply + "</p>";
 
-generateInsights(w,s,e);
-healthRisk(w,s,e);
-weeklyAverage(w,s,e);
-updateHabitScore(w,s,e);
-aiTips(w,s,e);
-updateMoodChart(m);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  document.getElementById("user-input").value = "";
 }
 
-// BMI CALCULATOR
-function calculateBMI(){
-let h=height.value/100;
-let w=weight.value;
+function getBotReply(input) {
+  input = input.toLowerCase();
 
-if(!h || !w){
-bmiResult.innerText="Please enter height & weight";
-return;
+  if (input.includes("diet"))
+    return "Eat more fruits, vegetables, and drink plenty of water.";
+  if (input.includes("exercise"))
+    return "Try 30 minutes of walking or yoga daily.";
+  if (input.includes("sleep"))
+    return "Aim for 7–8 hours of sleep every night.";
+  if (input.includes("stress"))
+    return "Practice deep breathing and meditation.";
+  if (input.includes("water"))
+    return "Drink at least 8 glasses of water daily.";
+
+  return "I'm here to help! Ask about diet, exercise, sleep, stress, or water.";
 }
+</script>
 
-let bmi=(w/(h*h)).toFixed(2);
-let category="";
-
-if(bmi<18.5) category="Underweight";
-else if(bmi<25) category="Normal";
-else if(bmi<30) category="Overweight";
-else category="Obese";
-
-bmiResult.innerText=`BMI: ${bmi} (${category})`;
-}
-
-// WEEKLY AVG
-function weeklyAverage(w,s,e){
-weeklyData.push((w+s+e)/3);
-let avg=(weeklyData.reduce((a,b)=>a+b,0)/weeklyData.length).toFixed(2);
-weeklyAvg.innerText="Weekly Avg: "+avg;
-}
-
-// INSIGHTS
-function generateInsights(w,s,e){
-let msg="";
-if(w<6) msg+="Drink more water. ";
-if(s<7) msg+="Sleep more. ";
-if(e<30) msg+="Exercise daily. ";
-if(msg==="") msg="Excellent habits!";
-insights.innerText=msg;
-}
-
-// RISK
-function healthRisk(w,s,e){
-if(w>=6 && s>=7 && e>=30){
-riskBox.innerText="Low Risk";
-riskBox.style.background="green";
-}else if(w>=4 && s>=5){
-riskBox.innerText="Moderate Risk";
-riskBox.style.background="orange";
-}else{
-riskBox.innerText="High Risk";
-riskBox.style.background="red";
-}
-}
-
-// HABIT SCORE
-function updateHabitScore(w,s,e){
-let score=Math.min(100,(w*5)+(s*5)+(e/2));
-habitScore.innerText=score+"/100";
-}
-
-// AI TIPS
-function aiTips(w,s,e){
-let tips=[];
-if(w<6) tips.push("💧 Drink more water");
-if(s<7) tips.push("😴 Sleep 7-8 hrs");
-if(e<30) tips.push("🏃 Exercise 30 mins");
-if(!tips.length) tips.push("🌟 Great job!");
-aiTips.innerText=tips.join(" • ");
-}
-
-// MOOD CHART
-const moodChart=new Chart(document.getElementById("moodChart"),{
-type:"bar",
-data:{
-labels:["Happy","Sad","Stressed","Energetic"],
-datasets:[{label:"Mood Count",data:moodData}]
-}
-});
-
-function updateMoodChart(m){
-if(m==="Happy") moodData[0]++;
-if(m==="Sad") moodData[1]++;
-if(m==="Stressed") moodData[2]++;
-if(m==="Energetic") moodData[3]++;
-moodChart.update();
-}
-
-// DARK MODE
-function toggleDarkMode(){
-document.body.classList.toggle("dark");
-}
-  <script>
+<!-- Service Worker -->
+<script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log("Service Worker Registered"));
@@ -253,5 +159,3 @@ if ('serviceWorker' in navigator) {
 
 </body>
 </html>
-```
-
