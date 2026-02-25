@@ -19,7 +19,21 @@ header{
   text-align:center;
   font-size:22px;
 }
-
+<button id="installAppBtn" style="
+position:fixed;
+top:15px;
+right:15px;
+background:#fff;
+color:#2E8B57;
+border:none;
+padding:8px 12px;
+border-radius:6px;
+font-weight:bold;
+display:none;
+cursor:pointer;">
+📥 Download App
+</button>
+  
 .container{
   padding:15px;
   display:grid;
@@ -295,6 +309,28 @@ function reply(msg){
 }
 </script>
 
+  <script>
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById("installAppBtn").style.display = "block";
+});
+
+document.getElementById("installAppBtn").addEventListener("click", async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+    if (choice.outcome === "accepted") {
+      alert("🎉 Healify installed successfully!");
+    }
+    deferredPrompt = null;
+  }
+});
+</script>
+  
 </body>
 </html>
+
 
